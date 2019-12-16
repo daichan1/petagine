@@ -1,26 +1,26 @@
 import React from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { makeStyles, createStyles } from '@material-ui/core/styles'
+import Index from './pages/index'
 
-function App() {
+const useStyles = makeStyles(
+  createStyles({
+    root: {
+      backgroundColor: '#C0C0C0'
+    },
+    container: {
+      marginLeft: 'auto',
+      marginRight: 'auto'
+    }
+  })
+)
+
+export default function App() {
+  const classes = useStyles({})
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={classes.root}>
+      <div className={classes.container}>
+        <Index />
+      </div>
     </div>
   )
 }
-
-export default App

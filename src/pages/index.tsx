@@ -10,7 +10,8 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
-      textAlign: 'center'
+      textAlign: 'center',
+      backgroundColor: '#C0C0C0'
     },
     grid: {
       marginTop: theme.spacing(3)

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -7,6 +8,7 @@ import Paper from '@material-ui/core/Paper'
 import Table from '@material-ui/core/Table'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
+import Button from '@material-ui/core/Button'
 import image from '../object.jpg'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -22,6 +24,16 @@ const useStyles = makeStyles((theme: Theme) =>
     paperImpressions: {
       margin: theme.spacing(2),
       padding: theme.spacing(3, 2)
+    },
+    textWhite: {
+      color: 'white'
+    },
+    link: {
+      textDecoration: 'none',
+      padding: theme.spacing(1)
+    },
+    marginLeftAuto: {
+      marginLeft: 'auto'
     }
   })
 )
@@ -40,6 +52,18 @@ export default function Show() {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6">書籍個別</Typography>
+          <Link
+            to="/books"
+            className={`${classes.textWhite} + ${classes.link} + ${classes.marginLeftAuto}`}
+          >
+            書籍一覧
+          </Link>
+          <Link
+            to="/books/new"
+            className={`${classes.textWhite} + ${classes.link}`}
+          >
+            新規作成
+          </Link>
         </Toolbar>
       </AppBar>
       <Paper className={classes.paperBasicInfo}>
@@ -61,6 +85,14 @@ export default function Show() {
             <TableRow>
               <TableCell>ステータス</TableCell>
               <TableCell>{info.status}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>各種ボタン</TableCell>
+              <TableCell>
+                <Button variant="contained">
+                  <Link to="/books/1/edit">編集</Link>
+                </Button>
+              </TableCell>
             </TableRow>
           </Table>
         </div>

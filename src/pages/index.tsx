@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import axios from 'axios'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
 import AppBar from '@material-ui/core/AppBar'
@@ -6,6 +7,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
 import image from '../object.jpg'
+import API from '../settings/api'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -53,6 +55,24 @@ const images: string[] = [
 
 export default function Index() {
   const classes = useStyles({})
+  useEffect(() => {
+    getIndex()
+  }, [])
+  function getIndex() {
+    axios
+      .get(API.url.index, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((results): void => {
+        console.log(results)
+      })
+      .catch((err): void => {
+        console.log(err)
+      })
+  }
   return (
     <div className={classes.root}>
       <AppBar position="static">

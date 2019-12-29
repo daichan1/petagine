@@ -42,7 +42,7 @@ export default function Edit() {
           </Link>
         </Toolbar>
       </AppBar>
-      <InputBookForm />
+      <InputBookForm action="edit" />
     </div>
   )
 }

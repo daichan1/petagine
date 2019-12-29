@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState } from 'react'
+import axios from 'axios'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import TableContainer from '@material-ui/core/TableContainer'
@@ -8,6 +9,11 @@ import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
 import InputLabel from '@material-ui/core/InputLabel'
 import NativeSelect from '@material-ui/core/NativeSelect'
+import API from '../settings/api'
+
+interface Props {
+  action: string
+}
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,8 +43,58 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export default function InputBookForm() {
+export default function InputBookForm(props: Props) {
   const classes = useStyles({})
+  const [book, setBook] = useState({
+    title: '',
+    author: '',
+    publisher: '',
+    status: '',
+    gist: '',
+    impression: ''
+  })
+  function requestUrl(): string {
+    if (props.action === 'new') {
+      return API.url.create
+    } else {
+      return API.url.create
+    }
+  }
+  function changeTitle(event: React.ChangeEvent<HTMLInputElement>) {
+    setBook({ ...book, title: event.target.value })
+  }
+  function changeAuthor(event: React.ChangeEvent<HTMLInputElement>) {
+    setBook({ ...book, author: event.target.value })
+  }
+  function changePublisher(event: React.ChangeEvent<HTMLInputElement>) {
+    setBook({ ...book, publisher: event.target.value })
+  }
+  function changeStatus(event: React.ChangeEvent<HTMLSelectElement>) {
+    setBook({ ...book, status: event.target.value })
+  }
+  function changeGist(event: React.ChangeEvent<HTMLInputElement>) {
+    setBook({ ...book, gist: event.target.value })
+  }
+  function changeImpression(event: React.ChangeEvent<HTMLInputElement>) {
+    setBook({ ...book, impression: event.target.value })
+  }
+  function postParams() {
+    const url: string = requestUrl()
+    axios
+      .post(url, {
+        book,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((results): void => {
+        console.log(results)
+      })
+      .catch((err): void => {
+        console.log(err)
+      })
+  }
   return (
     <form autoComplete="off">
       <TableContainer component={Paper} className={classes.tableContainer}>
@@ -49,6 +105,7 @@ export default function InputBookForm() {
               label="タイトル"
               variant="outlined"
               className={classes.inputForm}
+              onChange={changeTitle}
             />
           </TableRow>
           <TableRow className={classes.tableRow}>
@@ -57,6 +114,7 @@ export default function InputBookForm() {
               label="著者"
               variant="outlined"
               className={classes.inputForm}
+              onChange={changeAuthor}
             />
           </TableRow>
           <TableRow className={classes.tableRow}>
@@ -65,6 +123,7 @@ export default function InputBookForm() {
               label="出版社"
               variant="outlined"
               className={classes.inputForm}
+              onChange={changePublisher}
             />
           </TableRow>
           <TableRow className={classes.tableRow}>
@@ -74,6 +133,7 @@ export default function InputBookForm() {
               id="demo-customized-select-native"
               value="0"
               className={classes.inputForm}
+              onChange={changeStatus}
             >
               <option value={0}>読んでない</option>
               <option value={1}>読んだ</option>
@@ -89,6 +149,7 @@ export default function InputBookForm() {
               rows="4"
               variant="filled"
               className={classes.inputForm}
+              onChange={changeGist}
             />
           </TableRow>
           <TableRow className={classes.tableRow}>
@@ -100,6 +161,7 @@ export default function InputBookForm() {
               rows="4"
               variant="filled"
               className={classes.inputForm}
+              onChange={changeImpression}
             />
           </TableRow>
           <TableRow className={classes.tableRow}>
@@ -110,7 +172,12 @@ export default function InputBookForm() {
           </TableRow>
           <TableRow className={classes.tableRow}>
             <TableCell className={classes.tableCell}>送信</TableCell>
-            <input type="submit" value="保存" className={classes.submit} />
+            <input
+              type="button"
+              value="保存"
+              className={classes.submit}
+              onClick={postParams}
+            />
           </TableRow>
         </Table>
       </TableContainer>

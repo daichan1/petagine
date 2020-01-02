@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import aws from 'aws-sdk'
 import axios from 'axios'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
@@ -9,6 +10,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
 import InputLabel from '@material-ui/core/InputLabel'
 import NativeSelect from '@material-ui/core/NativeSelect'
+import { accessKeyId, secretKey, bucket } from '../settings/aws'
 import API from '../settings/api'
 
 interface Props {
@@ -42,6 +44,12 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 )
+// AWS接続先設定
+aws.config.update({
+  region: 'ap-northeast-1',
+  accessKeyId: accessKeyId,
+  secretAccessKey: secretKey
+})
 
 export default function InputBookForm(props: Props) {
   const classes = useStyles({})
@@ -51,7 +59,8 @@ export default function InputBookForm(props: Props) {
     publisher: '',
     status: '',
     gist: '',
-    impression: ''
+    impression: '',
+    image: ''
   })
   function requestUrl(): string {
     if (props.action === 'new') {
@@ -78,6 +87,50 @@ export default function InputBookForm(props: Props) {
   function changeImpression(event: React.ChangeEvent<HTMLInputElement>) {
     setBook({ ...book, impression: event.target.value })
   }
+  function changeImage(event: React.ChangeEvent<HTMLInputElement>) {
+    // nullチェック必須(ts)
+    if (event.target.files != null) {
+      event.preventDefault()
+      const image = event.target.files[0]
+      // S3に画像をアップロード
+      s3UploadImage(image)
+    }
+  }
+  // S3画像アップロード
+  function s3UploadImage(file: File) {
+    const s3 = new aws.S3()
+    const fileName = setFileName(file.type.split('/')[1])
+    const imageUrl = makeImageUrl(fileName)
+    const params = {
+      Bucket: bucket,
+      Key: fileName,
+      Body: file,
+      ContentType: file.type,
+      ACL: 'public-read'
+    }
+    // S3にサムネイルを保存
+    s3.putObject(params, (err, data): void => {
+      // 正常にアップロードされた時だけ画像URLを更新
+      if (err == null) {
+        setBook({ ...book, image: imageUrl })
+      }
+      console.log(data)
+      console.log(err)
+    })
+  }
+  // ファイル名を設定
+  function setFileName(fileType: string) {
+    const today = new Date()
+    const fileName = `${today.getFullYear()}${today.getMonth() +
+      1}${today.getDate()}${today.getHours()}${today.getMinutes()}${today.getSeconds()}.${fileType}`
+    return fileName
+  }
+  // 画像URLを生成
+  function makeImageUrl(fileName: string) {
+    const url = `https://${bucket}.s3-ap-northeast-1.amazonaws.com/${fileName}`
+    return url
+  }
+  // 書籍データを送信(json形式)
   function postParams() {
     const url: string = requestUrl()
     axios
@@ -168,7 +221,11 @@ export default function InputBookForm(props: Props) {
             <TableCell className={classes.tableCell}>
               画像アップロード
             </TableCell>
-            <input type="file" className={classes.inputForm} />
+            <input
+              type="file"
+              className={classes.inputForm}
+              onChange={changeImage}
+            />
           </TableRow>
           <TableRow className={classes.tableRow}>
             <TableCell className={classes.tableCell}>送信</TableCell>

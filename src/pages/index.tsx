@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import { Link } from 'react-router-dom'
@@ -6,7 +6,7 @@ import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
-import image from '../object.jpg'
+// import image from '../object.jpg'
 import API from '../settings/api'
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -37,24 +37,10 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-// テストデータ
-const images: string[] = [
-  image,
-  image,
-  image,
-  image,
-  image,
-  image,
-  image,
-  image,
-  image,
-  image,
-  image,
-  image
-]
-
 export default function Index() {
   const classes = useStyles({})
+  const [books, setBooks] = useState([])
+  // ページ読み込み時だけ実行される
   useEffect(() => {
     getIndex()
   }, [])
@@ -66,10 +52,11 @@ export default function Index() {
           'Content-Type': 'application/json'
         }
       })
-      .then((results): void => {
+      .then(results => {
         console.log(results)
+        setBooks(results.data)
       })
-      .catch((err): void => {
+      .catch(err => {
         console.log(err)
       })
   }
@@ -84,10 +71,10 @@ export default function Index() {
         </Toolbar>
       </AppBar>
       <Grid container spacing={3}>
-        {images.map(image => (
-          <Grid key={image} item xs={6} sm={3} className={classes.grid}>
+        {books.map((book: { id: number; title: string; image: string }) => (
+          <Grid key={book.id} item xs={6} sm={3} className={classes.grid}>
             <Link to="/books/1/show">
-              <img src={image} alt="書籍" className={classes.img} />
+              <img src={book.image} alt="書籍" className={classes.img} />
             </Link>
           </Grid>
         ))}

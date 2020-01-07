@@ -43,6 +43,7 @@ export default function Index() {
   // ページ読み込み時だけ実行される
   useEffect(() => {
     getIndex()
+    // eslint-disable-next-line
   }, [])
   function getIndex() {
     axios
@@ -73,7 +74,7 @@ export default function Index() {
       <Grid container spacing={3}>
         {books.map((book: { id: number; title: string; image: string }) => (
           <Grid key={book.id} item xs={6} sm={3} className={classes.grid}>
-            <Link to="/books/1/show">
+            <Link to={`/books/${book.id}/show`}>
               <img src={book.image} alt="書籍" className={classes.img} />
             </Link>
           </Grid>

@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
@@ -9,7 +10,6 @@ import Table from '@material-ui/core/Table'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
 import Button from '@material-ui/core/Button'
-import image from '../object.jpg'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,19 +34,46 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     marginLeftAuto: {
       marginLeft: 'auto'
+    },
+    img: {
+      height: 300
     }
   })
 )
 
-const info = {
-  title: 'オブジェクト指向設計実践ガイド',
-  author: '高山さん',
-  publisher: '講談社',
-  status: '読書中'
-}
-
-export default function Show() {
+export default function Show(props: { match: { params: { id: string } } }) {
   const classes = useStyles({})
+  const [book, setBook] = useState({
+    id: 0,
+    title: '',
+    author: '',
+    publisher: '',
+    status: '',
+    gist: '',
+    impression: '',
+    image: ''
+  })
+  const { id } = props.match.params
+  useEffect(() => {
+    getShow()
+    // eslint-disable-next-line
+  }, [])
+  function getShow() {
+    axios
+      .get(`http://localhost:3000/api/books/${id}`, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(results => {
+        console.log(results)
+        setBook(results.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
   return (
     <div>
       <AppBar position="static">
@@ -67,24 +94,24 @@ export default function Show() {
         </Toolbar>
       </AppBar>
       <Paper className={classes.paperBasicInfo}>
-        <img src={image} alt="書籍" />
+        <img src={book.image} alt="書籍" className={classes.img} />
         <div className={classes.basicInfo}>
           <Table aria-label="simple table">
             <TableRow>
               <TableCell>タイトル</TableCell>
-              <TableCell>{info.title}</TableCell>
+              <TableCell>{book.title}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>著者</TableCell>
-              <TableCell>{info.author}</TableCell>
+              <TableCell>{book.author}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>出版社</TableCell>
-              <TableCell>{info.publisher}</TableCell>
+              <TableCell>{book.publisher}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>ステータス</TableCell>
-              <TableCell>{info.status}</TableCell>
+              <TableCell>{book.status}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>各種ボタン</TableCell>
@@ -101,17 +128,13 @@ export default function Show() {
         <Typography variant="h6" gutterBottom>
           要点
         </Typography>
-        <Typography variant="body1">
-          ここに要点が入るここに要点が入るここに要点が入るここに要点が入るここに要点が入るここに要点が入る
-        </Typography>
+        <Typography variant="body1">{book.gist}</Typography>
       </Paper>
       <Paper className={classes.paperImpressions}>
         <Typography variant="h6" gutterBottom>
           感想
         </Typography>
-        <Typography variant="body1">
-          ここに感想が入るここに感想が入るここに感想が入るここに感想が入るここに感想が入るここに感想が入る
-        </Typography>
+        <Typography variant="body1">{book.impression}</Typography>
       </Paper>
     </div>
   )

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import aws from 'aws-sdk'
 import axios from 'axios'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
@@ -15,6 +15,7 @@ import API from '../settings/api'
 
 interface Props {
   action: string
+  id: string
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -62,11 +63,15 @@ export default function InputBookForm(props: Props) {
     impression: '',
     image: ''
   })
-  function requestUrl(): string {
+  useEffect(() => {
+    getEdit()
+    // eslint-disable-next-line
+  }, [])
+  function paramsRequest(): void {
     if (props.action === 'new') {
-      return API.url.create
+      postParams()
     } else {
-      return API.url.create
+      putParams()
     }
   }
   function changeTitle(event: React.ChangeEvent<HTMLInputElement>) {
@@ -132,9 +137,42 @@ export default function InputBookForm(props: Props) {
   }
   // 書籍データを送信(json形式)
   function postParams() {
-    const url: string = requestUrl()
     axios
-      .post(url, {
+      .post(API.url.create, {
+        book,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((results): void => {
+        console.log(results)
+      })
+      .catch((err): void => {
+        console.log(err)
+      })
+  }
+  // 書籍データ取得(編集処理用)
+  function getEdit() {
+    axios
+      .get(`http://localhost:3000/api/books/${props.id}/edit`, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(results => {
+        console.log(results)
+        setBook(results.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+  // 更新する書籍データを送信(json)
+  function putParams() {
+    axios
+      .put(`http://localhost:3000/api/books/${props.id}`, {
         book,
         headers: {
           Accept: 'application/json',
@@ -158,6 +196,7 @@ export default function InputBookForm(props: Props) {
               label="タイトル"
               variant="outlined"
               className={classes.inputForm}
+              value={book.title}
               onChange={changeTitle}
             />
           </TableRow>
@@ -167,6 +206,7 @@ export default function InputBookForm(props: Props) {
               label="著者"
               variant="outlined"
               className={classes.inputForm}
+              value={book.author}
               onChange={changeAuthor}
             />
           </TableRow>
@@ -176,6 +216,7 @@ export default function InputBookForm(props: Props) {
               label="出版社"
               variant="outlined"
               className={classes.inputForm}
+              value={book.publisher}
               onChange={changePublisher}
             />
           </TableRow>
@@ -184,8 +225,8 @@ export default function InputBookForm(props: Props) {
             <InputLabel htmlFor="demo-customized-select-native"></InputLabel>
             <NativeSelect
               id="demo-customized-select-native"
-              value="0"
               className={classes.inputForm}
+              value={book.status}
               onChange={changeStatus}
             >
               <option value={0}>読んでない</option>
@@ -202,6 +243,7 @@ export default function InputBookForm(props: Props) {
               rows="4"
               variant="filled"
               className={classes.inputForm}
+              value={book.gist}
               onChange={changeGist}
             />
           </TableRow>
@@ -214,6 +256,7 @@ export default function InputBookForm(props: Props) {
               rows="4"
               variant="filled"
               className={classes.inputForm}
+              value={book.impression}
               onChange={changeImpression}
             />
           </TableRow>
@@ -233,7 +276,7 @@ export default function InputBookForm(props: Props) {
               type="button"
               value="保存"
               className={classes.submit}
-              onClick={postParams}
+              onClick={paramsRequest}
             />
           </TableRow>
         </Table>

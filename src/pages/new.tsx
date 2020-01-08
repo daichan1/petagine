@@ -28,7 +28,7 @@ export default function New() {
           </Link>
         </Toolbar>
       </AppBar>
-      <InputBookForm action="new" />
+      <InputBookForm action="new" id="0" />
     </div>
   )
 }

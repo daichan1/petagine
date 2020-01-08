@@ -21,8 +21,9 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 )
 
-export default function Edit() {
+export default function Edit(props: { match: { params: { id: string } } }) {
   const classes = useStyles({})
+  const { id } = props.match.params
   return (
     <div>
       <AppBar position="static">
@@ -42,7 +43,7 @@ export default function Edit() {
           </Link>
         </Toolbar>
       </AppBar>
-      <InputBookForm action="edit" />
+      <InputBookForm action="edit" id={id} />
     </div>
   )
 }

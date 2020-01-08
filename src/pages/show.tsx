@@ -117,7 +117,7 @@ export default function Show(props: { match: { params: { id: string } } }) {
               <TableCell>各種ボタン</TableCell>
               <TableCell>
                 <Button variant="contained">
-                  <Link to="/books/1/edit">編集</Link>
+                  <Link to={`/books/${id}/edit`}>編集</Link>
                 </Button>
               </TableCell>
             </TableRow>

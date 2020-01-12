@@ -42,6 +42,9 @@ const useStyles = makeStyles((theme: Theme) =>
     submit: {
       margin: theme.spacing(2),
       width: 150
+    },
+    wordCount: {
+      margin: theme.spacing(2)
     }
   })
 )
@@ -54,6 +57,8 @@ aws.config.update({
 
 export default function InputBookForm(props: Props) {
   const classes = useStyles({})
+  const gistMaxLength = 5000
+  const impressionMaxLength = 10000
   const [book, setBook] = useState({
     title: '',
     author: '',
@@ -61,7 +66,9 @@ export default function InputBookForm(props: Props) {
     status: '',
     gist: '',
     impression: '',
-    image: ''
+    image: '',
+    gistWordCount: 0,
+    impressionWordCount: 0
   })
   useEffect(() => {
     getEdit()
@@ -87,10 +94,20 @@ export default function InputBookForm(props: Props) {
     setBook({ ...book, status: event.target.value })
   }
   function changeGist(event: React.ChangeEvent<HTMLInputElement>) {
-    setBook({ ...book, gist: event.target.value })
+    if(event.target.value.length > gistMaxLength){
+      event.target.style.color = 'red'
+    } else {
+      event.target.style.color = 'black'
+    }
+    setBook({ ...book, gist: event.target.value, gistWordCount: event.target.value.length })
   }
   function changeImpression(event: React.ChangeEvent<HTMLInputElement>) {
-    setBook({ ...book, impression: event.target.value })
+    if(event.target.value.length > impressionMaxLength){
+      event.target.style.color = 'red'
+    } else {
+      event.target.style.color = 'black'
+    }
+    setBook({ ...book, impression: event.target.value, impressionWordCount: event.target.value.length })
   }
   function changeImage(event: React.ChangeEvent<HTMLInputElement>) {
     // nullチェック必須(ts)
@@ -236,6 +253,7 @@ export default function InputBookForm(props: Props) {
           </TableRow>
           <TableRow className={classes.tableRow}>
             <TableCell className={classes.tableCell}>要点</TableCell>
+            <p className={classes.wordCount}>{`${book.gistWordCount}/${gistMaxLength}`}</p>
             <TextField
               id="filled-multiline-static"
               label="要点"
@@ -249,6 +267,7 @@ export default function InputBookForm(props: Props) {
           </TableRow>
           <TableRow className={classes.tableRow}>
             <TableCell className={classes.tableCell}>感想</TableCell>
+            <p className={classes.wordCount}>{`${book.impressionWordCount}/${impressionMaxLength}`}</p>
             <TextField
               id="filled-multiline-static"
               label="感想"

@@ -253,7 +253,7 @@ export default function InputBookForm(props: Props) {
           </TableRow>
           <TableRow className={classes.tableRow}>
             <TableCell className={classes.tableCell}>要点</TableCell>
-            <p className={classes.wordCount}>{`${book.gistWordCount}/5000`}</p>
+            <p className={classes.wordCount}>{`${book.gistWordCount}/${gistMaxLength}`}</p>
             <TextField
               id="filled-multiline-static"
               label="要点"
@@ -267,7 +267,7 @@ export default function InputBookForm(props: Props) {
           </TableRow>
           <TableRow className={classes.tableRow}>
             <TableCell className={classes.tableCell}>感想</TableCell>
-            <p className={classes.wordCount}>{`${book.impressionWordCount}/10000`}</p>
+            <p className={classes.wordCount}>{`${book.impressionWordCount}/${impressionMaxLength}`}</p>
             <TextField
               id="filled-multiline-static"
               label="感想"

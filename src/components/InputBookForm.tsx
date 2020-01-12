@@ -229,9 +229,9 @@ export default function InputBookForm(props: Props) {
               value={book.status}
               onChange={changeStatus}
             >
-              <option value={0}>読んでない</option>
-              <option value={1}>読んだ</option>
-              <option value={2}>読書中</option>
+              <option value={"読んでいない"}>読んでない</option>
+              <option value={"読んだ"}>読んだ</option>
+              <option value={"読書中"}>読書中</option>
             </NativeSelect>
           </TableRow>
           <TableRow className={classes.tableRow}>

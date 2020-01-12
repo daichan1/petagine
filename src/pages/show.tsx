@@ -37,6 +37,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     img: {
       height: 300
+    },
+    button: {
+      marginRight: theme.spacing(2)
     }
   })
 )
@@ -69,6 +72,21 @@ export default function Show(props: { match: { params: { id: string } } }) {
       .then(results => {
         console.log(results)
         setBook(results.data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+  function deleteBook() {
+    axios
+      .delete(`http://localhost:3000/api/books/${id}`, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(results => {
+        console.log(results)
       })
       .catch(err => {
         console.log(err)
@@ -116,8 +134,11 @@ export default function Show(props: { match: { params: { id: string } } }) {
             <TableRow>
               <TableCell>各種ボタン</TableCell>
               <TableCell>
-                <Button variant="contained">
+                <Button variant="contained" className={classes.button}>
                   <Link to={`/books/${id}/edit`}>編集</Link>
+                </Button>
+                <Button variant="contained" onClick={deleteBook}>
+                  削除
                 </Button>
               </TableCell>
             </TableRow>

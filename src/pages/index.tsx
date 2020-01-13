@@ -6,8 +6,7 @@ import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
-// import image from '../object.jpg'
-import API from '../settings/api'
+import NativeSelect from '@material-ui/core/NativeSelect'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -28,11 +27,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     link: {
       color: 'white',
-      marginLeft: 'auto',
       textDecoration: 'none'
     },
     text: {
       textAlign: 'right'
+    },
+    select: {
+      color: 'white',
+      marginLeft: 'auto',
+      marginRight: theme.spacing(2)
     }
   })
 )
@@ -42,12 +45,15 @@ export default function Index() {
   const [books, setBooks] = useState([])
   // ページ読み込み時だけ実行される
   useEffect(() => {
-    getIndex()
+    getIndex('')
     // eslint-disable-next-line
   }, [])
-  function getIndex() {
+  function getIndex(status: string) {
     axios
-      .get(API.url.index, {
+      .get('http://localhost:3000/api/books', {
+        params: {
+          status: status
+        },
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json'
@@ -61,11 +67,24 @@ export default function Index() {
         console.log(err)
       })
   }
+  function changeStatus(event: React.ChangeEvent<HTMLSelectElement>) {
+    getIndex(event.target.value)
+  }
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar className={classes.toolBar}>
           <Typography variant="h6">書籍一覧</Typography>
+          <NativeSelect
+            id="demo-customized-select-native"
+            className={classes.select}
+            onChange={changeStatus}
+          >
+            <option value={''}>一覧</option>
+            <option value={'読んでいない'}>読んでない</option>
+            <option value={'読んだ'}>読んだ</option>
+            <option value={'読書中'}>読書中</option>
+          </NativeSelect>
           <Link to="/books/new" className={classes.link}>
             新規作成
           </Link>
